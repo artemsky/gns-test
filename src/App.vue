@@ -1,17 +1,17 @@
 <template>
-  <div id="app" class="container">
-    <img src="./assets/logo.png">
+  <div id="app">
+    <app-header></app-header>
     <HelloWorld/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Header from './components/Header';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld,
+    'app-header': Header,
   },
 };
 </script>
