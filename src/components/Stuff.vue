@@ -14,12 +14,13 @@
               </tr>
             </thead>
             <tbody>
-              <stuff-item v-for="item in stuff" :item="item"/>
+              <stuff-item v-for="(item, index) in tableData" :item="item" :index="index + 1" :key="item.id"/>
             </tbody>
           </table>
         </div>
       </div>
-      <div class="card-footer text-muted text-right">
+      <div class="card-footer text-muted d-flex justify-content-between">
+        <stuff-pagination v-model="activePage" :totalCount="stuff.length / itemsPerPage"/>
         Total: 000
       </div>
     </div>
@@ -30,6 +31,7 @@
 <script>
   import StuffHeader from './StuffHeader';
   import StuffItem from './StuffItem';
+  import StuffPagination from './StuffPagination';
   import stuff from '../../server/test.json';
 
   export default {
@@ -37,6 +39,7 @@
     components: {
       StuffHeader,
       StuffItem,
+      StuffPagination,
     },
     data: () => ({
       stuff,
@@ -48,7 +51,15 @@
         location: 'Location',
         currency: 'Currency',
       },
+      activePage: 1,
+      itemsPerPage: 10,
     }),
+    computed: {
+      tableData() {
+        return this.stuff
+          .slice((this.activePage - 1) * this.itemsPerPage, this.activePage * this.itemsPerPage);
+      },
+    },
     methods: {
       activateFilter(value) {
         this.activeFilter = value;
