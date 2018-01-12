@@ -155,7 +155,7 @@ const mutations = {
   },
   [UPDATE_STUFF](state, { id, value, field }) {
     const element = state.stuff.find(stuff => stuff.id === id);
-    if (element && element[field]) {
+    if (element && typeof element[field] !== 'undefined') {
       element[field] = value;
     }
   },
