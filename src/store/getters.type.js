@@ -3,4 +3,7 @@ export const GET_STUFF_PAGES_COUNT = 'stuffCount';
 export const GET_CURRENT_PAGE = 'currentPage';
 export const GET_TOTAL = 'totalCurrency';
 export const GET_TOTAL_FROM_CURRENT_PAGE = 'totalCurrencyPerActivePage';
-
+export const GET_FILTER_OPTIONS = 'filterOptions';
+export const GET_ACTIVE_FILTER = 'activeFilter';
+export const GET_SEARCH_VALUE = 'searchValue';
+export const IS_LOADING = 'isLoading';

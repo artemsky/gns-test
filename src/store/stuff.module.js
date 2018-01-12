@@ -5,28 +5,44 @@ import {
   GET_CURRENT_PAGE,
   GET_TOTAL,
   GET_TOTAL_FROM_CURRENT_PAGE,
+  GET_FILTER_OPTIONS,
+  GET_ACTIVE_FILTER,
+  GET_SEARCH_VALUE,
+  IS_LOADING,
 } from './getters.type';
 import {
   FETCH_DATA,
   CHANGE_FILTER,
   CHANGE_PAGE,
+  SET_ACTIVE_FILTER,
+  SET_SEARCH_VALUE,
 } from './actions.type';
 import {
   FETCH_START,
   FETCH_END,
   UPDATE_FILTER,
   UPDATE_PAGE,
+  UPDATE_ACTIVE_FILTER,
+  UPDATE_SEARCH_VALUE,
 } from './mutations.type';
+
+const filter = {
+  global: 'global',
+  name: 'name',
+  location: 'location',
+  currency: 'currency',
+};
 
 const vState = {
   stuff: [],
   isLoading: false,
-  activeFilter: 'Global',
+  activeFilter: 'global',
+  searchValue: null,
   filterOptions: {
-    global: 'Global',
-    name: 'Name',
-    location: 'Location',
-    currency: 'Currency',
+    [filter.global]: 'Global',
+    [filter.name]: 'Name',
+    [filter.location]: 'Location',
+    [filter.currency]: 'Currency',
   },
   activePage: 1,
   itemsPerPage: 10,
@@ -36,7 +52,23 @@ const getters = {
   [GET_STUFF](state) {
     const start = (state.activePage - 1) * state.itemsPerPage;
     const end = state.activePage * state.itemsPerPage;
-    return state.stuff
+    let result = state.stuff;
+    if (state.searchValue) {
+      result = result.filter((stuff) => {
+        if (state.activeFilter === filter.global) {
+          return Object
+            .keys(stuff)
+            .some(key => stuff[key]
+              .toString()
+              .toLocaleLowerCase()
+              .includes(state.searchValue.toLocaleLowerCase()));
+        }
+        return stuff[state.activeFilter]
+          .toLocaleLowerCase()
+          .includes(state.searchValue.toLocaleLowerCase());
+      });
+    }
+    return result
       .slice(start, end);
   },
   [GET_STUFF_PAGES_COUNT](state) {
@@ -50,6 +82,18 @@ const getters = {
   },
   [GET_TOTAL](state) {
     return state.stuff.reduce((a, b) => a + parseInt(b.currency, 10), 0);
+  },
+  [IS_LOADING](state) {
+    return state.isLoading;
+  },
+  [GET_FILTER_OPTIONS](state) {
+    return state.filterOptions;
+  },
+  [GET_ACTIVE_FILTER](state) {
+    return state.activeFilter;
+  },
+  [GET_SEARCH_VALUE](state) {
+    return state.searchValue;
   },
 };
 
@@ -69,6 +113,12 @@ const actions = {
   [CHANGE_PAGE]({ commit }, page) {
     commit(UPDATE_PAGE, page);
   },
+  [SET_ACTIVE_FILTER]({ commit }, value) {
+    commit(UPDATE_ACTIVE_FILTER, value);
+  },
+  [SET_SEARCH_VALUE]({ commit }, value) {
+    commit(UPDATE_SEARCH_VALUE, value);
+  },
 };
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -78,12 +128,19 @@ const mutations = {
   },
   [FETCH_END](state, stuff) {
     state.stuff = stuff;
+    state.isLoading = false;
   },
   [UPDATE_FILTER](state, value) {
     state.activeFilter = value;
   },
   [UPDATE_PAGE](state, page) {
     state.activePage = page;
+  },
+  [UPDATE_ACTIVE_FILTER](state, value) {
+    state.activeFilter = value;
+  },
+  [UPDATE_SEARCH_VALUE](state, value) {
+    state.searchValue = value;
   },
 };
 
