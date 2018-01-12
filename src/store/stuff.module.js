@@ -17,6 +17,7 @@ import {
   CHANGE_PAGE,
   SET_ACTIVE_FILTER,
   SET_SEARCH_VALUE,
+  CHANGE_STUFF,
 } from './actions.type';
 import {
   FETCH_START,
@@ -25,6 +26,7 @@ import {
   UPDATE_PAGE,
   UPDATE_ACTIVE_FILTER,
   UPDATE_SEARCH_VALUE,
+  UPDATE_STUFF,
 } from './mutations.type';
 
 const filter = {
@@ -123,6 +125,9 @@ const actions = {
   [SET_SEARCH_VALUE]({ commit }, value) {
     commit(UPDATE_SEARCH_VALUE, value);
   },
+  [CHANGE_STUFF]({ commit }, payload) {
+    commit(UPDATE_STUFF, payload);
+  },
 };
 
 /* eslint no-param-reassign: ["error", { "props": false }] */
@@ -147,6 +152,12 @@ const mutations = {
   [UPDATE_SEARCH_VALUE](state, value) {
     state.activePage = 1;
     state.searchValue = value;
+  },
+  [UPDATE_STUFF](state, { id, value, field }) {
+    const element = state.stuff.find(stuff => stuff.id === id);
+    if (element && element[field]) {
+      element[field] = value;
+    }
   },
 };
 
