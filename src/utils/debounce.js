@@ -1,6 +1,6 @@
 export default function debounce(func, wait, immediate) {
   let timeout;
-  return function (...args) {
+  return function (...args) {  // eslint-disable-line
     clearTimeout(timeout);
     timeout = setTimeout(() => {
       timeout = null;
