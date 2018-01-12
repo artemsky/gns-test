@@ -1,28 +1,25 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <HelloWorld/>
+    <app-header />
+    <stuff/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Header from './components/Header';
+import Stuff from './components/Stuff';
 
 export default {
   name: 'app',
   components: {
-    HelloWorld,
+    'app-header': Header,
+    Stuff,
   },
 };
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss">
+  $fa-font-path: "~font-awesome/fonts";
+  @import "~bootstrap/scss/bootstrap";
+  @import "~font-awesome/scss/font-awesome";
 </style>
