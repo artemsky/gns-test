@@ -35,7 +35,7 @@
           return this.$store.getters[GET_SEARCH_VALUE];
         },
         set(value) {
-          this.$store.commit(SET_SEARCH_VALUE, value);
+          this.$store.dispatch(SET_SEARCH_VALUE, value);
         },
       },
     },

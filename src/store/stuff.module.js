@@ -28,6 +28,7 @@ import {
   UPDATE_SEARCH_VALUE,
   UPDATE_STUFF,
 } from './mutations.type';
+import debounce from '../utils/debounce';
 
 const filter = {
   global: 'global',
@@ -122,9 +123,9 @@ const actions = {
   [SET_ACTIVE_FILTER]({ commit }, value) {
     commit(UPDATE_ACTIVE_FILTER, value);
   },
-  [SET_SEARCH_VALUE]({ commit }, value) {
+  [SET_SEARCH_VALUE]: debounce(({ commit }, value) => {
     commit(UPDATE_SEARCH_VALUE, value);
-  },
+  }, 300),
   [CHANGE_STUFF]({ commit }, payload) {
     commit(UPDATE_STUFF, payload);
   },
