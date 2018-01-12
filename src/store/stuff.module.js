@@ -1,6 +1,7 @@
 import Api from '../common/Api.service';
 import {
   GET_STUFF,
+  GET_FILTERED_STUFF,
   GET_STUFF_PAGES_COUNT,
   GET_CURRENT_PAGE,
   GET_TOTAL,
@@ -49,12 +50,15 @@ const vState = {
 };
 
 const getters = {
-  [GET_STUFF](state) {
+  [GET_STUFF](state, getter) {
     const start = (state.activePage - 1) * state.itemsPerPage;
     const end = state.activePage * state.itemsPerPage;
-    let result = state.stuff;
+    return getter[GET_FILTERED_STUFF]
+      .slice(start, end);
+  },
+  [GET_FILTERED_STUFF](state) {
     if (state.searchValue) {
-      result = result.filter((stuff) => {
+      return state.stuff.filter((stuff) => {
         if (state.activeFilter === filter.global) {
           return Object
             .keys(stuff)
@@ -64,15 +68,15 @@ const getters = {
               .includes(state.searchValue.toLocaleLowerCase()));
         }
         return stuff[state.activeFilter]
+          .toString()
           .toLocaleLowerCase()
           .includes(state.searchValue.toLocaleLowerCase());
       });
     }
-    return result
-      .slice(start, end);
+    return state.stuff;
   },
-  [GET_STUFF_PAGES_COUNT](state) {
-    return state.stuff.length / state.itemsPerPage;
+  [GET_STUFF_PAGES_COUNT](state, getter) {
+    return Math.ceil(getter[GET_FILTERED_STUFF].length / state.itemsPerPage);
   },
   [GET_CURRENT_PAGE](state) {
     return state.activePage;
@@ -137,9 +141,11 @@ const mutations = {
     state.activePage = page;
   },
   [UPDATE_ACTIVE_FILTER](state, value) {
+    state.activePage = 1;
     state.activeFilter = value;
   },
   [UPDATE_SEARCH_VALUE](state, value) {
+    state.activePage = 1;
     state.searchValue = value;
   },
 };
