@@ -14,14 +14,18 @@
               </tr>
             </thead>
             <tbody>
-              <stuff-item v-for="(item, index) in tableData" :item="item" :index="index + 1" :key="item.id"/>
+              <stuff-item v-for="(item, index) in stuff" :item="item" :index="index + 1" :key="item.id"/>
             </tbody>
           </table>
         </div>
       </div>
       <div class="card-footer text-muted d-flex justify-content-between">
-        <stuff-pagination v-model="activePage" :totalCount="stuff.length / itemsPerPage"/>
-        Total: 000
+        <stuff-pagination />
+        <div class="d-flex flex-column">
+          <div><b>Total:</b> {{total}}</div>
+          <div><b>Total at this page:</b> {{totalThisPage}}</div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -29,42 +33,29 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   import StuffHeader from './StuffHeader';
   import StuffItem from './StuffItem';
   import StuffPagination from './StuffPagination';
-  import stuff from '../../server/test.json';
+  import { GET_STUFF, GET_TOTAL, GET_TOTAL_FROM_CURRENT_PAGE } from '../store/getters.type';
+  import { FETCH_DATA } from '../store/actions.type';
 
   export default {
-    name: 'HelloWorld',
+    name: 'stuff',
     components: {
       StuffHeader,
       StuffItem,
       StuffPagination,
     },
-    data: () => ({
-      stuff,
-      advancedSearchOpen: false,
-      activeFilter: 'Global',
-      filterOptions: {
-        global: 'Global',
-        name: 'Name',
-        location: 'Location',
-        currency: 'Currency',
-      },
-      activePage: 1,
-      itemsPerPage: 10,
-    }),
     computed: {
-      tableData() {
-        return this.stuff
-          .slice((this.activePage - 1) * this.itemsPerPage, this.activePage * this.itemsPerPage);
-      },
+      ...mapGetters({
+        stuff: GET_STUFF,
+        total: GET_TOTAL,
+        totalThisPage: GET_TOTAL_FROM_CURRENT_PAGE,
+      }),
     },
-    methods: {
-      activateFilter(value) {
-        this.activeFilter = value;
-        this.advancedSearchOpen = false;
-      },
+    created() {
+      this.$store.dispatch(FETCH_DATA);
     },
   };
 </script>

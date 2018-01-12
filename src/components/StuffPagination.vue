@@ -4,7 +4,7 @@
       <li class="page-item" :class="{'disabled': !prev}">
         <a class="page-link" href="#" tabindex="-1" @click.prevent="changePage(-1)">Previous</a>
       </li>
-      <!--<li class="page-item disabled"><a class="page-link" href="#">1</a></li>-->
+      <li class="page-item disabled"><span class="page-link">{{page}} / {{pagesCount}}</span></li>
       <!--<li class="page-item"><a class="page-link" href="#">2</a></li>-->
       <!--<li class="page-item"><a class="page-link" href="#">3</a></li>-->
       <li class="page-item" :class="{'disabled': !next}">
@@ -15,35 +15,41 @@
 </template>
 
 <script>
-export default {
-  name: 'stuff-pagination',
-  props: [
-    'value',
-    'totalCount',
-  ],
-  data: () => ({
-    prev: false,
-    next: true,
-  }),
-  methods: {
-    changePage(step) {
-      const nextValue = this.value + step;
-      if (nextValue > 0 && nextValue <= this.totalCount) {
-        this.$emit('input', this.value + step);
-        this.prev = true;
-        this.next = true;
-      }
+  import { mapGetters } from 'vuex';
+  import { GET_STUFF_PAGES_COUNT, GET_CURRENT_PAGE } from '../store/getters.type';
+  import { CHANGE_PAGE } from '../store/actions.type';
 
-      if (nextValue === 1) {
-        this.prev = false;
-        this.next = true;
-      } else if (nextValue === this.totalCount) {
-        this.prev = true;
-        this.next = false;
-      }
+  export default {
+    name: 'stuff-pagination',
+    data: () => ({
+      prev: false,
+      next: true,
+    }),
+    computed: {
+      ...mapGetters({
+        pagesCount: GET_STUFF_PAGES_COUNT,
+        page: GET_CURRENT_PAGE,
+      }),
     },
-  },
-};
+    methods: {
+      changePage(step) {
+        const nextValue = this.page + step;
+        if (nextValue > 0 && nextValue <= this.pagesCount) {
+          this.$store.dispatch(CHANGE_PAGE, nextValue);
+          this.prev = true;
+          this.next = true;
+        }
+
+        if (nextValue === 1) {
+          this.prev = false;
+          this.next = true;
+        } else if (nextValue === this.pagesCount) {
+          this.prev = true;
+          this.next = false;
+        }
+      },
+    },
+  };
 </script>
 
 <style>
